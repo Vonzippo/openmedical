@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 
 // Routes
 import practicesRouter from './routes/practices';
+import authRouter from './routes/auth';
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // API Routes
+app.use('/api/auth', authRouter);
 app.use('/api/practices', practicesRouter);
 
 // Error handling - Einheitliche Fehlercodes
