@@ -47,7 +47,14 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
-                <Route path="cms" element={<CMS />} />
+                <Route
+                  path="cms"
+                  element={
+                    <ProtectedRoute requiredRole="admin">
+                      <CMS />
+                    </ProtectedRoute>
+                  }
+                />
               </Route>
             </Routes>
           </AuthInitializer>

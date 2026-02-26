@@ -9,6 +9,8 @@ import dotenv from 'dotenv';
 import practicesRouter from './routes/practices';
 import authRouter from './routes/auth';
 import contentsRouter from './routes/contents';
+import partnersRouter from './routes/partners';
+import searchRouter from './routes/search';
 
 dotenv.config();
 
@@ -37,6 +39,8 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRouter);
 app.use('/api/practices', practicesRouter);
 app.use('/api/contents', contentsRouter);
+app.use('/api/partners', partnersRouter);
+app.use('/api/search', searchRouter);
 
 // Error handling - Einheitliche Fehlercodes
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {

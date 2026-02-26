@@ -110,7 +110,7 @@ function Kontakt() {
       </Grid>
 
       {/* Support Section */}
-      <Card sx={{ mt: 4, p: 3, bgcolor: '#e8e8e8' }}>
+      <Card sx={{ mt: 6, p: 3, bgcolor: '#e8e8e8' }}>
         <Typography variant="h6" gutterBottom>
           Support
         </Typography>

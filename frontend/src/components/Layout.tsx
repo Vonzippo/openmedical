@@ -10,7 +10,14 @@ import {
   Select,
   MenuItem,
   FormControl,
+  IconButton,
+  Tooltip,
+  InputLabel,
 } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import { useAppDispatch } from '../store';
+import { openSearch } from '../store/slices/searchSlice';
+import GlobalSearch from './GlobalSearch';
 
 const navItems = [
   { label: 'Home', path: '/' },
@@ -23,14 +30,72 @@ const navItems = [
 
 function Layout() {
   const location = useLocation();
+  const dispatch = useAppDispatch();
+
+  const handleOpenSearch = () => {
+    dispatch(openSearch());
+  };
+
+  // Tastaturnavigation für Suche (Ctrl+K)
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      e.preventDefault();
+      dispatch(openSearch());
+    }
+  };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      {/* Header */}
-      <AppBar position="static" color="default" elevation={0} sx={{ borderBottom: '2px solid #ccc' }}>
+    <Box
+      sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}
+      onKeyDown={handleKeyDown}
+    >
+      {/* Skip Link für Tastaturnavigation - WCAG 2.1 AA */}
+      <a
+        href="#main-content"
+        style={{
+          position: 'absolute',
+          left: '-9999px',
+          top: 'auto',
+          width: '1px',
+          height: '1px',
+          overflow: 'hidden',
+        }}
+        onFocus={(e) => {
+          e.currentTarget.style.left = '10px';
+          e.currentTarget.style.top = '10px';
+          e.currentTarget.style.width = 'auto';
+          e.currentTarget.style.height = 'auto';
+          e.currentTarget.style.padding = '8px 16px';
+          e.currentTarget.style.background = '#1976d2';
+          e.currentTarget.style.color = '#fff';
+          e.currentTarget.style.zIndex = '9999';
+        }}
+        onBlur={(e) => {
+          e.currentTarget.style.left = '-9999px';
+        }}
+      >
+        Zum Hauptinhalt springen
+      </a>
+
+      {/* Global Search Dialog */}
+      <GlobalSearch />
+
+      {/* Header - Semantisches HTML */}
+      <AppBar
+        component="header"
+        position="static"
+        color="default"
+        elevation={0}
+        sx={{ borderBottom: '2px solid #ccc' }}
+        role="banner"
+      >
         <Toolbar sx={{ justifyContent: 'space-between' }}>
-          {/* Logo Placeholder */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {/* Logo mit aria-label */}
+          <Link
+            to="/"
+            style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: 8 }}
+            aria-label="openmedical - Zur Startseite"
+          >
             <Box
               sx={{
                 width: 40,
@@ -42,16 +107,24 @@ function Layout() {
                 justifyContent: 'center',
                 fontSize: 10,
               }}
+              role="img"
+              aria-label="openmedical Logo"
             >
               LOGO
             </Box>
-            <Typography variant="h6" sx={{ fontWeight: 400 }}>
+            <Typography variant="h6" component="span" sx={{ fontWeight: 400 }}>
               openmedical
             </Typography>
-          </Box>
+          </Link>
 
-          {/* Navigation */}
-          <Stack direction="row" spacing={1}>
+          {/* Navigation - Semantisches nav Element */}
+          <Stack
+            component="nav"
+            direction="row"
+            spacing={1}
+            role="navigation"
+            aria-label="Hauptnavigation"
+          >
             {navItems.map((item) => (
               <Button
                 key={item.path}
@@ -59,32 +132,79 @@ function Layout() {
                 to={item.path}
                 variant={location.pathname === item.path ? 'contained' : 'text'}
                 size="small"
+                aria-current={location.pathname === item.path ? 'page' : undefined}
+                sx={{
+                  // Fokus-Indikator für Tastaturnavigation - WCAG 2.1 AA
+                  '&:focus-visible': {
+                    outline: '3px solid #1976d2',
+                    outlineOffset: '2px',
+                  },
+                }}
               >
                 {item.label}
               </Button>
             ))}
           </Stack>
 
-          {/* Language Selector */}
-          <FormControl size="small" sx={{ minWidth: 80 }}>
-            <Select defaultValue="de" variant="outlined">
-              <MenuItem value="de">DE</MenuItem>
-              <MenuItem value="fr">FR</MenuItem>
-              <MenuItem value="it">IT</MenuItem>
-              <MenuItem value="en">EN</MenuItem>
-            </Select>
-          </FormControl>
+          {/* Search & Language */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Tooltip title="Suchen (Ctrl+K)">
+              <IconButton
+                onClick={handleOpenSearch}
+                size="small"
+                aria-label="Suche öffnen"
+                sx={{
+                  '&:focus-visible': {
+                    outline: '3px solid #1976d2',
+                    outlineOffset: '2px',
+                  },
+                }}
+              >
+                <SearchIcon />
+              </IconButton>
+            </Tooltip>
+            <FormControl size="small" sx={{ minWidth: 80 }}>
+              <InputLabel id="language-select-label" sx={{ display: 'none' }}>
+                Sprache
+              </InputLabel>
+              <Select
+                labelId="language-select-label"
+                defaultValue="de"
+                variant="outlined"
+                aria-label="Sprache auswählen"
+                sx={{
+                  '&:focus-visible': {
+                    outline: '3px solid #1976d2',
+                    outlineOffset: '2px',
+                  },
+                }}
+              >
+                <MenuItem value="de">DE</MenuItem>
+                <MenuItem value="fr">FR</MenuItem>
+                <MenuItem value="it">IT</MenuItem>
+                <MenuItem value="en">EN</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
         </Toolbar>
       </AppBar>
 
-      {/* Main Content */}
-      <Container component="main" sx={{ flex: 1, py: 4 }} maxWidth="lg">
+      {/* Main Content - Semantisches main Element */}
+      <Container
+        component="main"
+        id="main-content"
+        sx={{ flex: 1, py: 4 }}
+        maxWidth="lg"
+        role="main"
+        tabIndex={-1}
+      >
         <Outlet />
       </Container>
 
-      {/* Footer */}
+      {/* Footer - Semantisches footer Element */}
       <Box
         component="footer"
+        role="contentinfo"
         sx={{
           py: 3,
           px: 2,

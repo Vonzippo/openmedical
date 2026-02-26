@@ -4,6 +4,8 @@ import type { TypedUseSelectorHook } from 'react-redux';
 import authReducer from './slices/authSlice';
 import practiceReducer from './slices/practiceSlice';
 import contentReducer from './slices/contentSlice';
+import partnerReducer from './slices/partnerSlice';
+import searchReducer from './slices/searchSlice';
 
 // Redux Store - Zentrale Zustandsverwaltung
 // Hält globalen State konsistent über alle Komponenten
@@ -12,6 +14,8 @@ export const store = configureStore({
     auth: authReducer,
     practice: practiceReducer,
     content: contentReducer,
+    partner: partnerReducer,
+    search: searchReducer,
   },
 });
 
