@@ -12,6 +12,8 @@ function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
   const location = useLocation();
   const { isAuthenticated, isLoading, user } = useAppSelector((state) => state.auth);
 
+  console.log('ProtectedRoute:', { path: location.pathname, requiredRole, userRole: user?.role, isAuthenticated, isLoading });
+
   // Laden - Spinner anzeigen
   if (isLoading) {
     return (
@@ -26,9 +28,11 @@ function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Rolle prüfen falls erforderlich
-  if (requiredRole && user?.role !== requiredRole && user?.role !== 'admin') {
-    return <Navigate to="/dashboard" replace />;
+  // Rolle prüfen falls erforderlich (Admin hat immer Zugriff)
+  if (requiredRole && user?.role !== requiredRole) {
+    if (user?.role !== 'admin') {
+      return <Navigate to="/dashboard" replace />;
+    }
   }
 
   return <>{children}</>;

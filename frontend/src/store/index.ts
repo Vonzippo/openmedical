@@ -1,7 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import type { TypedUseSelectorHook } from 'react-redux';
 import authReducer from './slices/authSlice';
 import practiceReducer from './slices/practiceSlice';
+import contentReducer from './slices/contentSlice';
 
 // Redux Store - Zentrale Zustandsverwaltung
 // Hält globalen State konsistent über alle Komponenten
@@ -9,6 +11,7 @@ export const store = configureStore({
   reducer: {
     auth: authReducer,
     practice: practiceReducer,
+    content: contentReducer,
   },
 });
 
