@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import {
   Box,
@@ -7,17 +8,16 @@ import {
   Container,
   Button,
   Stack,
-  Select,
-  MenuItem,
-  FormControl,
   IconButton,
   Tooltip,
-  InputLabel,
+  TextField,
+  Alert,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { useAppDispatch } from '../store';
 import { openSearch } from '../store/slices/searchSlice';
 import GlobalSearch from './GlobalSearch';
+import api from '../services/api';
 
 const navItems = [
   { label: 'Home', path: '/' },
@@ -31,9 +31,25 @@ const navItems = [
 function Layout() {
   const location = useLocation();
   const dispatch = useAppDispatch();
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterStatus, setNewsletterStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [newsletterMessage, setNewsletterMessage] = useState('');
 
   const handleOpenSearch = () => {
     dispatch(openSearch());
+  };
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await api.post('/newsletter/subscribe', { email: newsletterEmail });
+      setNewsletterStatus('success');
+      setNewsletterMessage('Anmeldung erfolgreich!');
+      setNewsletterEmail('');
+    } catch (error: any) {
+      setNewsletterStatus('error');
+      setNewsletterMessage(error.response?.data?.error || 'Anmeldung fehlgeschlagen');
+    }
   };
 
   // Tastaturnavigation für Suche (Ctrl+K)
@@ -146,7 +162,7 @@ function Layout() {
             ))}
           </Stack>
 
-          {/* Search & Language */}
+          {/* Search */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Tooltip title="Suchen (Ctrl+K)">
               <IconButton
@@ -163,28 +179,6 @@ function Layout() {
                 <SearchIcon />
               </IconButton>
             </Tooltip>
-            <FormControl size="small" sx={{ minWidth: 80 }}>
-              <InputLabel id="language-select-label" sx={{ display: 'none' }}>
-                Sprache
-              </InputLabel>
-              <Select
-                labelId="language-select-label"
-                defaultValue="de"
-                variant="outlined"
-                aria-label="Sprache auswählen"
-                sx={{
-                  '&:focus-visible': {
-                    outline: '3px solid #1976d2',
-                    outlineOffset: '2px',
-                  },
-                }}
-              >
-                <MenuItem value="de">DE</MenuItem>
-                <MenuItem value="fr">FR</MenuItem>
-                <MenuItem value="it">IT</MenuItem>
-                <MenuItem value="en">EN</MenuItem>
-              </Select>
-            </FormControl>
           </Box>
         </Toolbar>
       </AppBar>
@@ -211,15 +205,50 @@ function Layout() {
           mt: 'auto',
           bgcolor: '#eee',
           borderTop: '2px solid #ccc',
-          textAlign: 'center',
         }}
       >
-        <Typography variant="body2" color="text.secondary">
-          [FOOTER PLACEHOLDER]
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          © 2024 openmedical AG | Adresse | Telefon | Email
-        </Typography>
+        <Container maxWidth="lg">
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
+            <Box>
+              <Typography variant="body2" color="text.secondary">
+                © 2024 openmedical AG
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Adresse | Telefon | Email
+              </Typography>
+            </Box>
+
+            {/* Newsletter-Anmeldung */}
+            <Box component="form" onSubmit={handleNewsletterSubmit} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>
+                Newsletter:
+              </Typography>
+              <TextField
+                size="small"
+                placeholder="E-Mail"
+                type="email"
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
+                required
+                aria-label="Newsletter E-Mail"
+                sx={{ bgcolor: 'white', width: 200 }}
+              />
+              <Button type="submit" variant="contained" size="small">
+                Anmelden
+              </Button>
+            </Box>
+          </Box>
+
+          {newsletterStatus !== 'idle' && (
+            <Alert
+              severity={newsletterStatus === 'success' ? 'success' : 'error'}
+              sx={{ mt: 2 }}
+              onClose={() => setNewsletterStatus('idle')}
+            >
+              {newsletterMessage}
+            </Alert>
+          )}
+        </Container>
       </Box>
     </Box>
   );

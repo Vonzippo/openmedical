@@ -13,17 +13,17 @@ function Kontakt() {
 
       <Grid container spacing={4}>
         {/* Contact Form */}
-        <Grid size={{ xs: 12, md: 7 }}>
+        <Grid item xs={12} md={7}>
           <Card sx={{ p: 3 }}>
             <Typography variant="h5" gutterBottom>
               Nachricht senden
             </Typography>
             <Stack spacing={3}>
               <Grid container spacing={2}>
-                <Grid size={{ xs: 12, sm: 6 }}>
+                <Grid item xs={12} sm={6}>
                   <TextField fullWidth label="Vorname" placeholder="[Vorname]" />
                 </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
+                <Grid item xs={12} sm={6}>
                   <TextField fullWidth label="Nachname" placeholder="[Nachname]" />
                 </Grid>
               </Grid>
@@ -45,7 +45,7 @@ function Kontakt() {
         </Grid>
 
         {/* Contact Info */}
-        <Grid size={{ xs: 12, md: 5 }}>
+        <Grid item xs={12} md={5}>
           <Card sx={{ p: 3, mb: 3 }}>
             <Typography variant="h5" gutterBottom>
               Kontaktdaten
@@ -110,7 +110,7 @@ function Kontakt() {
       </Grid>
 
       {/* Support Section */}
-      <Card sx={{ mt: 6, p: 3, bgcolor: '#e8e8e8' }}>
+      <Card sx={{ mt: 4, p: 3, bgcolor: '#e8e8e8' }}>
         <Typography variant="h6" gutterBottom>
           Support
         </Typography>

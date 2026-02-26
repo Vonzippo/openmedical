@@ -11,6 +11,7 @@ import authRouter from './routes/auth';
 import contentsRouter from './routes/contents';
 import partnersRouter from './routes/partners';
 import searchRouter from './routes/search';
+import newsletterRouter from './routes/newsletter';
 
 dotenv.config();
 
@@ -41,6 +42,7 @@ app.use('/api/practices', practicesRouter);
 app.use('/api/contents', contentsRouter);
 app.use('/api/partners', partnersRouter);
 app.use('/api/search', searchRouter);
+app.use('/api/newsletter', newsletterRouter);
 
 // Error handling - Einheitliche Fehlercodes
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
