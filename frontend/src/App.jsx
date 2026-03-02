@@ -12,6 +12,7 @@ import Produkte from './pages/Produkte';
 import Partner from './pages/Partner';
 import Jobs from './pages/Jobs';
 import Kontakt from './pages/Kontakt';
+import Support from './pages/Support';
 import Anmeldung from './pages/Anmeldung';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
@@ -34,6 +35,7 @@ function App() {
                 <Route path="partner" element={<Partner />} />
                 <Route path="jobs" element={<Jobs />} />
                 <Route path="kontakt" element={<Kontakt />} />
+                <Route path="support" element={<Support />} />
                 <Route path="anmeldung" element={<Anmeldung />} />
                 <Route path="login" element={<Login />} />
                 <Route path="register" element={<Register />} />

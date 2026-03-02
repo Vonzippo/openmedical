@@ -12,11 +12,21 @@ import {
   Stack,
   Alert,
   CircularProgress,
+  Container,
+  InputAdornment,
 } from '@mui/material';
+import PersonIcon from '@mui/icons-material/Person';
+import EmailIcon from '@mui/icons-material/Email';
+import LockIcon from '@mui/icons-material/Lock';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import { useAppDispatch, useAppSelector } from '../store';
 import { register as registerUser, clearError } from '../store/slices/authSlice';
 
 const schema = yup.object({
+  benutzername: yup
+    .string()
+    .required('Benutzername ist erforderlich'),
   email: yup
     .string()
     .required('E-Mail ist erforderlich')
@@ -44,14 +54,12 @@ function Register() {
     resolver: yupResolver(schema),
   });
 
-  // Redirect wenn bereits eingeloggt
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/dashboard');
     }
   }, [isAuthenticated, navigate]);
 
-  // Fehler zurücksetzen beim Verlassen
   useEffect(() => {
     return () => {
       dispatch(clearError());
@@ -69,72 +77,160 @@ function Register() {
   };
 
   return (
-    <Box sx={{ maxWidth: 400, mx: 'auto', mt: 8 }}>
-      <Card sx={{ p: 4 }}>
-        <Typography variant="h4" gutterBottom textAlign="center">
-          Registrieren
-        </Typography>
-        <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mb: 3 }}>
-          Erstellen Sie ein neues Benutzerkonto
-        </Typography>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #E6F3F8 0%, #F7FAFC 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        py: 4,
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Decorative Elements */}
+      <Box sx={{ position: 'absolute', top: 80, left: 100, opacity: 0.2 }}>
+        <FavoriteIcon sx={{ fontSize: 40, color: '#0077B6' }} />
+      </Box>
+      <Box sx={{ position: 'absolute', bottom: 80, right: 100, opacity: 0.2 }}>
+        <LocalHospitalIcon sx={{ fontSize: 50, color: '#0077B6' }} />
+      </Box>
+      <Box sx={{ position: 'absolute', top: 200, right: 150, opacity: 0.15 }}>
+        <FavoriteIcon sx={{ fontSize: 30, color: '#0077B6' }} />
+      </Box>
 
-        {error && (
-          <Alert severity="error" sx={{ mb: 3 }}>
-            {error}
-          </Alert>
-        )}
-
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack spacing={3}>
-            <TextField
-              fullWidth
-              label="E-Mail"
-              type="email"
-              {...register('email')}
-              error={!!errors.email}
-              helperText={errors.email?.message}
-              autoComplete="email"
-            />
-            <TextField
-              fullWidth
-              label="Passwort"
-              type="password"
-              {...register('password')}
-              error={!!errors.password}
-              helperText={errors.password?.message}
-              autoComplete="new-password"
-            />
-            <TextField
-              fullWidth
-              label="Passwort bestätigen"
-              type="password"
-              {...register('confirmPassword')}
-              error={!!errors.confirmPassword}
-              helperText={errors.confirmPassword?.message}
-              autoComplete="new-password"
-            />
-            <Button
-              type="submit"
-              variant="contained"
-              size="large"
-              fullWidth
-              disabled={isLoading}
-              startIcon={isLoading ? <CircularProgress size={20} /> : null}
-            >
-              {isLoading ? 'Wird registriert...' : 'Registrieren'}
-            </Button>
-          </Stack>
-        </form>
-
-        <Box sx={{ mt: 3, textAlign: 'center' }}>
-          <Typography variant="body2">
-            Bereits ein Konto?{' '}
-            <Link to="/login" style={{ color: 'inherit' }}>
-              Jetzt anmelden
-            </Link>
+      <Container maxWidth="sm">
+        <Card
+          sx={{
+            p: 5,
+            borderRadius: 4,
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          }}
+        >
+          <Typography variant="h4" sx={{ fontWeight: 600, textAlign: 'center', mb: 1, color: '#0077B6' }}>
+            Registrierung
           </Typography>
-        </Box>
-      </Card>
+          <Typography
+            variant="body2"
+            sx={{ color: '#718096', textAlign: 'center', mb: 4 }}
+          >
+            Erstellen Sie ein neues Benutzerkonto
+          </Typography>
+
+          {error && (
+            <Alert severity="error" sx={{ mb: 3 }}>
+              {error}
+            </Alert>
+          )}
+
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Stack spacing={3}>
+              <Box>
+                <TextField
+                  fullWidth
+                  label="Benutzername *"
+                  placeholder="Benutzerne eingeben"
+                  {...register('benutzername')}
+                  error={!!errors.benutzername}
+                  helperText={errors.benutzername?.message || 'Benutzerne eingeben'}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <PersonIcon sx={{ color: '#A0AEC0' }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Box>
+              <Box>
+                <TextField
+                  fullWidth
+                  label="E-Mail *"
+                  type="email"
+                  placeholder="E-Mail eingeben"
+                  {...register('email')}
+                  error={!!errors.email}
+                  helperText={errors.email?.message || 'E-Mail eingeben'}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <EmailIcon sx={{ color: '#A0AEC0' }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Box>
+              <Box>
+                <TextField
+                  fullWidth
+                  label="Passwort eingeben"
+                  type="password"
+                  {...register('password')}
+                  error={!!errors.password}
+                  helperText={errors.password?.message}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <LockIcon sx={{ color: '#A0AEC0' }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Box>
+              <Box>
+                <TextField
+                  fullWidth
+                  label="Passwort bestätigen *"
+                  type="password"
+                  {...register('confirmPassword')}
+                  error={!!errors.confirmPassword}
+                  helperText={errors.confirmPassword?.message}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <LockIcon sx={{ color: '#A0AEC0' }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Box>
+
+              <Button
+                type="submit"
+                variant="contained"
+                size="large"
+                fullWidth
+                disabled={isLoading}
+                sx={{
+                  bgcolor: '#0077B6',
+                  py: 1.5,
+                  borderRadius: 2,
+                  textTransform: 'uppercase',
+                  '&:hover': { bgcolor: '#005A8C' },
+                }}
+              >
+                {isLoading ? (
+                  <CircularProgress size={24} sx={{ color: 'white' }} />
+                ) : (
+                  'KONTO ERSTELLEN'
+                )}
+              </Button>
+            </Stack>
+          </form>
+
+          <Box sx={{ mt: 4, textAlign: 'center' }}>
+            <Typography variant="body2" sx={{ color: '#718096' }}>
+              Haben Sie bereits ein Konto?{' '}
+              <Link
+                to="/login"
+                style={{ color: '#0077B6', textDecoration: 'none', fontWeight: 600 }}
+              >
+                Anmelden
+              </Link>
+            </Typography>
+          </Box>
+        </Card>
+      </Container>
     </Box>
   );
 }
